@@ -34,6 +34,11 @@ public class RegisterEmpresa {
 
         System.out.println("Empresa registrada exitosamente.");
     }
+
+
+    public Empresa getEmpresaCreada() {
+        return this.empresa;
+    }
 }
 
 

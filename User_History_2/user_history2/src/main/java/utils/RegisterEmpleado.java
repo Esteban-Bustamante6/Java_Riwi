@@ -20,6 +20,7 @@ public class RegisterEmpleado {
 
         System.out.print("ID del empleado: ");
         byte id = scanner.nextByte();
+        scanner.nextLine();
 
         System.out.print("Nombre del empleado: ");
         String nombre = scanner.nextLine();
@@ -42,7 +43,7 @@ public class RegisterEmpleado {
         System.out.print("Género (M/F): ");
         char genero = scanner.next().charAt(0);
 
-        Empleado empleado = new Empleado(id, codigoOficina, edad, cedula, sueldoBasicoF, bonoMensual, genero,nombre);
+        Empleado empleado = new Empleado(id, nombre, codigoOficina, edad, cedula, sueldoBasicoF, bonoMensual, genero);
         this.empleado = empleado;
 
         listaEmpleados.add(this.empleado);

@@ -11,7 +11,7 @@ public class Empleado {
         private String nombre;
         private double sueldofinal;
 
-    public Empleado(byte id, short codigoOficina, int edad, long cedula, float sueldoBasicoF, double bonoMensual, char genero, String nombre) {
+    public Empleado(byte id,String nombre, short codigoOficina, int edad, long cedula, float sueldoBasicoF, double bonoMensual, char genero) {
         this.id = id;
         this.codigoOficina = codigoOficina;
         this.edad = edad;
@@ -35,5 +35,12 @@ public class Empleado {
     public String getNombre() {
         return nombre;
     }
+
+    public long getCedula() {
+        return cedula;
+        
+    }
+
+
 
 }

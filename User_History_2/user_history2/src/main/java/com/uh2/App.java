@@ -3,68 +3,94 @@ package com.uh2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import utils.RegisterEmpleado;
 import utils.RegisterEmpresa;
 import schema.Empleado;
+import schema.Empresa;
 
 public class App {
-    // 1. Lista estática para que sea accesible desde el main
+    // 1. LISTAS GLOBALES (Nuestra "Base de Datos" temporal)
     private static List<Empleado> listaTotalEmpleados = new ArrayList<>();
+    private static List<Empresa> listaTotalEmpresas = new ArrayList<>();
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean condition = true;
 
         while (condition) {
-            System.out.println("\n--- BIENVENIDO AL SISTEMA ---");
-            System.out.println("1. Registrar Empresa y Buscar Empleado");
-            System.out.println("2. Salir");
-            System.out.print("Seleccione una opción: ");
-            
+            System.out.println("\n=== SISTEMA DE GESTIÓN ===");
+            System.out.println("1. Registrar/Gestionar Empresa");
+            System.out.println("2. Ver todos los empleados registrados");
+            System.out.println("3. Salir");
             int option = sc.nextInt();
 
             switch (option) {
                 case 1:
-                    RegisterEmpresa registerEmpresa = new RegisterEmpresa();
-                    registerEmpresa.registrarEmpresa();
+                    // Primero pedimos el nombre para ver si ya existe
+                    System.out.print("Nombre de la empresa a gestionar: ");
+                    sc.nextLine(); // Limpiar buffer
+                    String nombreBusqueda = sc.nextLine();
+                    
+                    Empresa empresaActual = buscarEmpresa(nombreBusqueda);
 
-                    System.out.println("\nIngrese el ID del empleado para ver su información:");
-                    int idBuscar = sc.nextInt();
-
-                    // 2. Lógica de búsqueda correcta
-                    Empleado encontrado = null;
-                    for (Empleado e : listaTotalEmpleados) {
-                        if (e.getId() == idBuscar) {
-                            encontrado = e;
-                            break;
-                        }
+                    if (empresaActual == null) {
+                        System.out.println("Empresa no existe. Creándola...");
+                        RegisterEmpresa regEmp = new RegisterEmpresa();
+                        regEmp.registrarEmpresa(); 
+                        // Aquí deberías tener un método en RegisterEmpresa que te devuelva el objeto creado
+                        // Supongamos que lo tienes y se llama getEmpresa()
+                        Empresa nuevaEmpresa = regEmp.getEmpresaCreada();
+                        listaTotalEmpresas.add(nuevaEmpresa);
                     }
 
-                    if (encontrado != null) {
-                        System.out.println("✅ Información del empleado: " + encontrado.getNombre());
+                    System.out.println("\nDigite el ID del empleado para consultar:");
+                    int idBuscar = sc.nextInt();
+                    Empleado empEncontrado = buscarEmpleado(idBuscar);
+
+                    if (empEncontrado != null) {
+                        // AQUÍ ESTÁ EL TRUCO: Usar los getters para mostrar la info
+                        System.out.println(" EMPLEADO ENCONTRADO:");
+                        System.out.println("Nombre: " + empEncontrado.getNombre());
+                        System.out.println("Cédula: " + empEncontrado.getCedula());
                     } else {
-                        System.out.println("❌ Empleado no encontrado.");
-                        System.out.println("Si desea registrar un nuevo empleado, ingrese 1:");
+                        System.out.println("No existe. ¿Desea registrarlo? (1. Sí / 2. No)");
                         if (sc.nextInt() == 1) {
-                            RegisterEmpleado reg = new RegisterEmpleado();
-                            reg.registrarEmpleado();
+                            RegisterEmpleado regEmpld = new RegisterEmpleado();
+                            regEmpld.registrarEmpleado();
                             
-                            // 3. ¡IMPORTANTE! Guardar el empleado en la lista del main
-                            listaTotalEmpleados.addAll(reg.getEmpleados());
+                            // IMPORTANTE: Recuperar el empleado y meterlo a la lista global
+                            listaTotalEmpleados.addAll(regEmpld.getEmpleados());
+                            System.out.println("¡Empleado guardado en la base de datos global!");
                         }
                     }
                     break;
 
                 case 2:
-                    condition = false;
-                    System.out.println("Saliendo del sistema...");
+                    System.out.println("--- LISTA TOTAL DE EMPLEADOS ---");
+                    for(Empleado e : listaTotalEmpleados) {
+                        System.out.println("ID: " + e.getId() + " | Nombre: " + e.getNombre());
+                    }
                     break;
 
-                default:
-                    System.out.println("Opción no válida.");
+                case 3:
+                    condition = false;
+                    break;
             }
         }
-        sc.close();
+    }
+
+    // MÉTODOS DE BÚSQUEDA (Para evitar duplicados)
+    private static Empresa buscarEmpresa(String nombre) {
+        for (Empresa e : listaTotalEmpresas) {
+            if (e.getNombre().equalsIgnoreCase(nombre)) return e;
+        }
+        return null;
+    }
+
+    private static Empleado buscarEmpleado(int id) {
+        for (Empleado e : listaTotalEmpleados) {
+            if (e.getId() == id) return e;
+        }
+        return null;
     }
 }
