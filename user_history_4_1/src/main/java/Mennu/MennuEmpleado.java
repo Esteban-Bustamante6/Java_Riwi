@@ -33,7 +33,7 @@ public class MennuEmpleado {
     }
 
     private static void verDatos() {
-        Empleado.InnerEmpleado emp     = SesionEmpleado.getEmpleadoActual();
+        Empleado  emp     = SesionEmpleado.getEmpleadoActual();
         Empresa.InnerEmpresa empresa   = SesionEmpleado.getEmpresaDelEmpleado();
 
         if (emp == null) {
@@ -45,37 +45,36 @@ public class MennuEmpleado {
         System.out.println("\n");
         System.out.println("       DATOS DEL EMPLEADO");
         System.out.println("");
-        System.out.println("Nombre          : " + emp.nombre());
-        System.out.println("Edad            : " + emp.edad());
-        System.out.println("Cédula          : " + emp.cedula());
-        System.out.println("Género          : " + emp.genero());
+        System.out.println("Nombre          : " + emp.genombre());
+        System.out.println("Edad            : " + emp.getEdad());
+        System.out.println("Cédula          : " + emp.getCedula());
         System.out.println("Empresa         : " + (empresa != null ? empresa.nombre() : "N/A"));
         System.out.println("Sede            : " + (empresa != null ? empresa.sede()   : "N/A"));
-        System.out.println("Código oficina  : " + emp.codigoOficina());
-        System.out.println("Estado          : " + (emp.activo() ? "Activo" : "Inactivo"));
+        System.out.println("Código oficina  : " + emp.getCodigoOficina());
+        System.out.println("Estado          : " + (emp.isActivo() ? "Activo" : "Inactivo"));
 
         // ── Información salarial ──
         System.out.println("\n── Información Salarial ──");
-        System.out.printf("Salario base    : $%.2f%n", (double) emp.sueldoBasicoF());
-        System.out.printf("Bono mensual    : $%.2f%n", emp.bonoMensual());
+        System.out.printf("Salario base    : $%.2f%n", (double) emp.getSueldoBasicoF());
+        System.out.printf("Bono mensual    : $%.2f%n", emp.getBonoMensual());
 
         // Calcula el salario final usando procesoEmpleado (con la fórmula real)
-        double salarioCalculado = ProcesoEmpleado.calcularSalarioFinal(emp.sueldoBasicoF(), emp.bonoMensual());
+        double salarioCalculado = ProcesoEmpleado.calcularSalarioFinal(emp.getSueldoBasicoF(), emp.getBonoMensual());
         System.out.printf("Sueldo final    : $%.2f%n", salarioCalculado);
 
         // Bono extra si ID es par
-        double bonoExtra = ProcesoEmpleado.calcularBonoExtra(emp.id());
+        double bonoExtra = ProcesoEmpleado.calcularBonoExtra(emp.getId());
         System.out.printf("Bono extra      : $%.2f %s%n", bonoExtra,
                 bonoExtra > 0 ? "(ID par ✓)" : "(ID impar)");
 
         // Elegibilidad
         boolean elegible = ProcesoEmpleado.validarElegibilidad(
-                emp.puntaje(), emp.edad(), emp.codigoOficina(), emp.activo());
+                emp.getPuntaje(), emp.getEdad(), emp.getCodigoOficina(), emp.isActivo());
         System.out.println("Elegibilidad    : " + (elegible ? "Sí aplica" : "No aplica"));
 
         // ── Puntaje y reportes ──
         System.out.println("\n── Puntaje y Reportes ──");
-        System.out.println("Puntaje         : " + emp.puntaje());
+        System.out.println("Puntaje         : " + emp.getPuntaje());
         System.out.println("(Los reportes trimestrales los genera la empresa desde su menú)");
     }
 }

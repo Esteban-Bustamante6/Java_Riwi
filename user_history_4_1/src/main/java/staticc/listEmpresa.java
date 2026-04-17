@@ -3,10 +3,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
+import Model.Developer;
 import Model.Empleado;
 import Model.Empresa;
 import staticc.listEmpleado;
 import Mennu.MennuEmpleado;
+import utils.ProcesoEmpleado;
 
 public class listEmpresa {
     private static List<Empresa.InnerEmpresa> empresas = new ArrayList<>();
@@ -51,24 +53,23 @@ public class listEmpresa {
 
     static {
         // 1. Solo necesitamos la lista de empleados para la empresa
-        List<Empleado.InnerEmpleado> empleadosDeRiwi = new ArrayList<>();
+        List<Empleado> empleadosDeRiwi = new ArrayList<>();
 
         // 2. Creamos al empleado (sin pasarle lista de empresas, asumiendo que el record ya no la pide)
-        Empleado.InnerEmpleado juanPerez = new Empleado.InnerEmpleado(
-            (byte) 1, 
-            (short) 101, 
-            30, 
-            123456789L, 
-            2000.0f, 
-            500.0, 
-            'M', 
-            "Juan Perez", 
-            2500.0, 
-            true, 
-            85
+        Empleado Esteban = new Developer(
+            "Esteban",                         
+            22,                                
+            123456789,                         
+            (byte) 1,                           
+            (short) 101,                        
+            15000.0f,                          
+            500.0,                            
+            ProcesoEmpleado.calcularSalarioFinal(15000.0f, 500.0), 
+            true,                               
+            80,                                 
+            "Java"                              
         );
-
-        empleadosDeRiwi.add(juanPerez);
+        empleadosDeRiwi.add(Esteban);
 
         Empresa.InnerEmpresa riwi = new Empresa.InnerEmpresa(
             (byte) 1, 
@@ -80,6 +81,6 @@ public class listEmpresa {
 
         empresas.add(riwi);
 
-        listEmpleado.agregarEmpleado(juanPerez);
+        listEmpleado.agregarEmpleado(Esteban);
     }
 }

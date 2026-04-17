@@ -44,8 +44,8 @@ public class MennuEmpresa {
                                 System.out.println("   No hay empleados vinculados.");
                             } else {
                                 // CORRECCIÓN: Usamos la instancia 'empresa' y el tipo 'InnerEmpleado'
-                                for (Empleado.InnerEmpleado empleado : empresa.empleados()) {
-                                    System.out.println("   - ID: " + empleado.id() + " | Nombre: " + empleado.nombre());
+                                for (Empleado empleado : empresa.empleados()) {
+                                    System.out.println("   - ID: " + empleado.getId() + " | Nombre: " + empleado.getNombre());
                                 }
                             }
                         }

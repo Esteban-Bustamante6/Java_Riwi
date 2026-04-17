@@ -16,8 +16,8 @@ public class EliminarEmpleado {
         }
 
         System.out.println("Empleados de " + empresa.nombre() + ":");
-        for (Empleado.InnerEmpleado emp : empresa.empleados()) {
-            System.out.println("  ID: " + emp.id() + " | Nombre: " + emp.nombre());
+        for (Empleado emp : empresa.empleados()) {
+            System.out.println("  ID: " + emp.getId() + " | Nombre: " + emp.getNombre());
         }
 
         Scanner sc = new Scanner(System.in);
@@ -26,11 +26,11 @@ public class EliminarEmpleado {
 
         // removeIf recorre la lista y elimina el elemento que cumpla la condición
         boolean eliminadoDeEmpresa = empresa.empleados()
-                .removeIf(emp -> emp.id() == idBuscar);
+                .removeIf(emp -> emp.getId() == idBuscar);
 
         // También lo eliminamos de la lista global de empleados
         boolean eliminadoGlobal = listEmpleado.getEmpleados()
-                .removeIf(emp -> emp.id() == idBuscar);
+                .removeIf(emp -> emp.getId() == idBuscar);
 
         if (eliminadoDeEmpresa) {
             System.out.println("Empleado con ID " + idBuscar + " eliminado correctamente.");

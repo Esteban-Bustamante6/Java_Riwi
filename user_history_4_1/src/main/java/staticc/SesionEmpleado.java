@@ -4,15 +4,15 @@ import Model.Empleado;
 import Model.Empresa;
 
 public class SesionEmpleado {
-    private static Empleado.InnerEmpleado empleadoActual = null;
+    private static Empleado empleadoActual = null;
     private static Empresa.InnerEmpresa   empresaDelEmpleado = null;
 
-    public static void setEmpleadoActual(Empleado.InnerEmpleado emp, Empresa.InnerEmpresa empresa) {
+    public static void setEmpleadoActual(Empleado emp, Empresa.InnerEmpresa empresa) {
         empleadoActual     = emp;
         empresaDelEmpleado = empresa;
     }
 
-    public static Empleado.InnerEmpleado getEmpleadoActual() {
+    public static Empleado getEmpleadoActual() {
         return empleadoActual;
     }
 

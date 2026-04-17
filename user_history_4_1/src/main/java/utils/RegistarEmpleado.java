@@ -2,8 +2,10 @@ package utils;
 
 import java.util.Scanner;
 
+import Model.Developer;
 import Model.Empleado;
 import Model.Empresa;
+import Model.Gerente;
 import staticc.SesionEmpresa;
 import staticc.listEmpleado;
 import utils.ProcesoEmpleado;
@@ -40,11 +42,32 @@ public class RegistarEmpleado {
         System.out.print("Puntaje : ");
         int puntaje = sc.nextInt();
 
-        Empleado.InnerEmpleado empleado = new Empleado.InnerEmpleado(
-            id, codigoOficina, edad, cedula, sueldoBasicoF,
-            bonoMensual, genero, nombre, ProcesoEmpleado.calcularSalarioFinal(puntaje, bonoMensual), activo, puntaje
-        );
+        
 
+        System.out.println("Tipo de empleado a registrar: 1. Developer, 2. Gerente");
+        int tipo = sc.nextInt();
+
+        Empleado empleado; // Declaramos la variable de tipo padre
+
+        
+        if (tipo == 1) {
+            System.out.print("Lenguaje de Programación: ");
+            String lenguaje = sc.next();
+            
+            // Instanciamos Developer calculando el salario final en línea
+            empleado = new Developer(nombre, edad, (int)cedula, id,codigoOficina, sueldoBasicoF, bonoMensual, ProcesoEmpleado.calcularSalarioFinal(sueldoBasicoF, bonoMensual), activo, puntaje, lenguaje
+            );
+        } else {
+            System.out.print("Presupuesto Mensual: ");
+            double pres = sc.nextDouble();
+            
+            // Instanciamos Gerente calculando el salario final en línea
+            empleado = new Gerente(
+                nombre, edad, (int)cedula, id, codigoOficina, sueldoBasicoF, bonoMensual, ProcesoEmpleado.calcularSalarioFinal(sueldoBasicoF, bonoMensual), activo, puntaje, pres
+            );
+        }
+
+        // Ahora sí puedes agregarlo porque 'empleado' ya no es abstracto, es un objeto real
         empresaActual.agregarEmpleado(empleado);
         listEmpleado.agregarEmpleado(empleado);
 

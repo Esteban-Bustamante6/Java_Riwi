@@ -44,11 +44,11 @@ public class logearEmpresa {
         }
 
         for (Empresa.InnerEmpresa empresa : listEmpresa.getEmpresas()) {
-            for (Empleado.InnerEmpleado emp : empresa.empleados()) {
-                if (emp.cedula() == cedula) {
+            for (Empleado emp : empresa.empleados()) {
+                if (emp.getCedula() == cedula) {
                     // Guarda tanto el empleado como la empresa a la que pertenece
                     SesionEmpleado.setEmpleadoActual(emp, empresa);
-                    System.out.println("Bienvenido, " + emp.nombre() + "!");
+                    System.out.println("Bienvenido, " + emp.getNombre() + "!");
                     return true;
                 }
             }

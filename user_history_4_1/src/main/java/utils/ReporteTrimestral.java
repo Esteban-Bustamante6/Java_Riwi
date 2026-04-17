@@ -2,30 +2,35 @@ package utils;
 
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import Model.Empleado;
 import Model.Empresa;
 import staticc.SesionEmpresa;
 
+/**
+ * Record para emitir reportes inmutables.
+ */
+record DesempeñoReport(int idEmpleado, double promedio, String feedback) {}
 
 public class ReporteTrimestral {
 
     /**
      * Solicita las calificaciones trimestrales de cada empleado de la empresa
      * logueada y genera un reporte con:
-     *  - Promedio por empleado (double)
-     *  - Puntaje simplificado con casting explícito double → int
-     *  - Estado de promoción con operador ternario
+     * - Promedio por empleado (double)
+     * - Puntaje simplificado con casting explícito double → int
+     * - Estado de promoción con operador ternario
      *
      * ANÁLISIS LTS — Mensajes de error en excepciones:
-     *  Java 8  : Al ingresar un tipo incorrecto en Scanner, el mensaje era genérico:
-     *            "java.util.InputMismatchException" sin indicar línea exacta del fallo.
-     *  Java 17 : Introdujo "Helpful NullPointerExceptions" (JEP 358), con mensajes
-     *            detallados que indican exactamente qué variable fue null y en qué
-     *            expresión. Esto se extendió a otros errores de tipo.
-     *  Java 21 : Refinó aún más los mensajes con contexto del valor que causó el
-     *            mismatch, facilitando el diagnóstico sin necesidad de debugger.
+     * Java 8  : Al ingresar un tipo incorrecto en Scanner, el mensaje era genérico:
+     * "java.util.InputMismatchException" sin indicar línea exacta del fallo.
+     * Java 17 : Introdujo "Helpful NullPointerExceptions" (JEP 358), con mensajes
+     * detallados que indican exactamente qué variable fue null y en qué
+     * expresión. Esto se extendió a otros errores de tipo.
+     * Java 21 : Refinó aún más los mensajes con contexto del valor que causó el
+     * mismatch, facilitando el diagnóstico sin necesidad de debugger.
      */
     public static void generarReporte() {
         Empresa.InnerEmpresa empresa = SesionEmpresa.getEmpresaActual();
@@ -34,7 +39,7 @@ public class ReporteTrimestral {
             return;
         }
 
-        List<Empleado.InnerEmpleado> empleados = empresa.empleados();
+        List<Empleado> empleados = empresa.empleados();
         if (empleados.isEmpty()) {
             System.out.println("La empresa no tiene empleados registrados.");
             return;
@@ -45,6 +50,9 @@ public class ReporteTrimestral {
         // Matriz: filas = empleados, columnas = 3 trimestres
         double[][] calificaciones = new double[totalEmpleados][3];
 
+        // Lista para almacenar reportes inmutables
+        List<DesempeñoReport> reportesEmitidos = new ArrayList<>();
+
         Scanner sc = new Scanner(System.in);
 
         System.out.println("\n====== Reporte Trimestral: " + empresa.nombre() + " ======");
@@ -52,8 +60,8 @@ public class ReporteTrimestral {
 
         // ── Captura de datos con try-catch (InputMismatchException) ──
         for (int i = 0; i < totalEmpleados; i++) {
-            Empleado.InnerEmpleado emp = empleados.get(i);
-            System.out.println("Empleado: " + emp.nombre());
+            Empleado emp = empleados.get(i);
+            System.out.println("Empleado: " + emp.getNombre());
 
             for (int j = 0; j < 3; j++) {
                 boolean entradaValida = false;
@@ -104,11 +112,16 @@ public class ReporteTrimestral {
              */
             String estadoPromocion = (promedio >= 70.0) ? "PROMOVIDO" : "EN OBSERVACIÓN";
 
-            Empleado.InnerEmpleado emp = empleados.get(i);
-            System.out.println("\nEmpleado        : " + emp.nombre());
-            System.out.printf( "Promedio        : %.2f%n", promedio);
+            Empleado emp = empleados.get(i);
+
+            // Integración del Record para emitir el reporte de fin de mes
+            DesempeñoReport reporte = new DesempeñoReport(emp.getId(), promedio, estadoPromocion);
+            reportesEmitidos.add(reporte);
+
+            System.out.println("\nEmpleado        : " + emp.getNombre());
+            System.out.printf( "Promedio        : %.2f%n", reporte.promedio());
             System.out.println("Puntaje Simple  : " + puntajeSimplificado + "  ← casting double→int (se trunca decimal)");
-            System.out.println("Estado          : " + estadoPromocion);
+            System.out.println("Estado          : " + reporte.feedback());
         }
 
         System.out.println("\n────── Fin del reporte ──────");

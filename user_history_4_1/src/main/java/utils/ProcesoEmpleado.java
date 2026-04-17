@@ -64,19 +64,19 @@ public class ProcesoEmpleado {
     }
 
 
-    public static void procesarEmpleado(Empleado.InnerEmpleado emp) {
-        System.out.println("\n====== Proceso de Empleado: " + emp.nombre() + " ======");
+    public static void procesarEmpleado(Empleado emp) {
+        System.out.println("\n====== Proceso de Empleado: " + emp.getNombre() + " ======");
 
-        double salarioFinal = calcularSalarioFinal(emp.sueldoBasicoF(), emp.bonoMensual());
+        double salarioFinal = calcularSalarioFinal(emp.getSueldoBasicoF(), emp.getBonoMensual());
         System.out.printf("Salario Final calculado : $%.2f%n", salarioFinal);
 
-        double bonoExtra = calcularBonoExtra(emp.id());
-        System.out.println("Bono extra (ID " + (emp.id() % 2 == 0 ? "par" : "impar") + ")  : $" + bonoExtra);
+        double bonoExtra = calcularBonoExtra(emp.getId());
+        System.out.println("Bono extra (ID " + (emp.getId() % 2 == 0 ? "par" : "impar") + ")  : $" + bonoExtra);
 
-        boolean elegible = validarElegibilidad(emp.puntaje(), emp.edad(), emp.codigoOficina(), emp.activo());
+        boolean elegible = validarElegibilidad(emp.getPuntaje(), emp.getEdad(), emp.getCodigoOficina(), emp.isActivo());
         System.out.println("¿Es elegible?           : " + (elegible ? "Sí" : "No"));
 
-        double bonoActualizado = actualizarBono(emp.bonoMensual(), 200.0);
+        double bonoActualizado = actualizarBono(emp.getBonoMensual(), 200.0);
         System.out.printf("Bono mensual actualizado: $%.2f (se agregó $200 con +=)%n", bonoActualizado);
     }
 }

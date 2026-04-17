@@ -10,9 +10,9 @@ public class Empresa {
         private String nombre;
         private String direccion;
         private String sede;
-        private List<Empleado.InnerEmpleado> empleados;
+        private List<Empleado> empleados;
 
-        public InnerEmpresa(byte id, String nombre, String direccion, String sede, List<Empleado.InnerEmpleado> empleados) {
+        public InnerEmpresa(byte id, String nombre, String direccion, String sede, List<Empleado> empleados) {
             this.id = id;
             this.nombre = nombre;
             this.direccion = direccion;
@@ -24,9 +24,9 @@ public class Empresa {
         public String nombre()     { return nombre; }
         public String direccion()  { return direccion; }
         public String sede()       { return sede; }
-        public List<Empleado.InnerEmpleado> empleados() { return empleados; }
+        public List<Empleado> empleados() { return empleados; }
 
-        public void agregarEmpleado(Empleado.InnerEmpleado empleado) {
+        public void agregarEmpleado(Empleado empleado) {
             this.empleados.add(empleado);
         }
     }
