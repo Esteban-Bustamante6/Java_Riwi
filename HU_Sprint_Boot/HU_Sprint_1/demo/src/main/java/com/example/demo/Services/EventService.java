@@ -1,13 +1,13 @@
 package com.example.demo.Services;
 
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.Models.Event;
 import com.example.demo.Repositories.EventsRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-
 public class EventService {
 
     private final EventsRepository repository;
@@ -16,48 +16,44 @@ public class EventService {
         this.repository = repository;
     }
 
-    public List<Event> findAll() {
-        return repository.findAll();
+    // Listar todos los eventos con paginación y ordenamiento
+    public Page<Event> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
+    // Buscar por nombre con paginación
+    public Page<Event> findByName(String name, Pageable pageable) {
+        return repository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    // Buscar por ID — lanza 404 si no existe
     public Event findById(Long id) {
-        return repository.findById(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", id));
     }
 
+    // Crear evento — el ID lo genera la BD automáticamente
     public Event create(Event event) {
-        if (event.getName() == null || event.getName().isEmpty()) {
-            throw new RuntimeException("El nombre es obligatorio");
-        }
-        if (event.getId() == null ){
-            throw new RuntimeException("debe de contener un id Unico");
-        }
-        else if(event.getDescription() == null || event.getDescription().isEmpty()) {
-            throw new RuntimeException("La Descripcion es obligatorio");
-        }
-        repository.save(event);
-        return event;
+        // Garantizamos que no venga un ID manual (la BD lo asigna)
+        event.setId(null);
+        return repository.save(event);
     }
 
-    public boolean delete(Long id) {
+    // Actualizar evento — lanza 404 si no existe
+    public Event update(Long id, Event updatedEvent) {
+        Event existing = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", id));
 
-        if (id == null){
-            throw new RuntimeException("debe de contener un id Unico");
-        }
-        return repository.delete(id);
+        existing.setName(updatedEvent.getName());
+        existing.setDescription(updatedEvent.getDescription());
+        return repository.save(existing);
     }
 
-    public boolean update(Long id, Event updatedEvent) {
-        if (updatedEvent.getName() == null || updatedEvent.getName().isEmpty()) {
-            throw new RuntimeException("El nombre es obligatorio para actualizar");
+    // Eliminar evento — lanza 404 si no existe
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Event", id);
         }
-        if (updatedEvent.getId() == null || updatedEvent.getId() == updatedEvent.getId()){
-            throw new RuntimeException("debe de contener un id Unico para actualizar");
-        }
-        else if(updatedEvent.getDescription() == null || updatedEvent.getDescription().isEmpty()) {
-            throw new RuntimeException("La Descripcion es obligatorio para actualizar");
-        }
-        Event resultado = repository.update(id, updatedEvent);
-        return (resultado != null);
+        repository.deleteById(id);
     }
-
 }

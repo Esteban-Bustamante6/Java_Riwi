@@ -1,51 +1,17 @@
 package com.example.demo.Repositories;
 
-
 import com.example.demo.Models.Venues;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
+public interface VenuesRepository extends JpaRepository<Venues, Long> {
 
-public class VenuesRepository implements GenericRepository<Venues, Long>{
+    // Derived Query: busca venues cuyo nombre contenga el texto (case-insensitive)
+    Page<Venues> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    private final List<Venues> venues = new ArrayList<>();
-
-    @Override
-    public List<Venues> findAll() {
-        return venues;
-    }
-    @Override
-    public Venues findById(Long id) {
-        return venues.stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public void save(Venues venuess) {
-        venues.add(venuess);
-
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        return venues.removeIf(e -> e.getId().equals(id));
-    }
-
-    @Override
-    public Venues update(Long id, Venues venues) {
-        Venues existing = this.findById(id);
-
-        if (existing != null) {
-            existing.setName(venues.getName());
-            existing.setAddress(venues.getAddress());
-            return existing;
-        }
-
-        return null;
-    }
+    // Derived Query: busca venues por dirección
+    Page<Venues> findByAddressContainingIgnoreCase(String address, Pageable pageable);
 }
