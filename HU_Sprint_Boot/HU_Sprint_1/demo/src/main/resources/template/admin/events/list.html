@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Eventos — Eventify Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header">
+    <div class="header-inner">
+        <span class="logo"> Eventify</span>
+        <nav>
+            <a th:href="@{/admin/events}" class="active">Eventos</a>
+            <a th:href="@{/admin/venues}">Lugares</a>
+            <a href="/swagger-ui.html" target="_blank" class="api-link">API Docs ↗</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="content">
+
+    <!-- Mensaje flash (Post-Redirect-Get) -->
+    <!-- th:if: solo se renderiza si successMessage existe en el modelo -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+    <div class="page-header">
+        <h1>Catálogo de Eventos</h1>
+        <a th:href="@{/admin/events/new}" class="btn btn-primary">+ Nuevo Evento</a>
+    </div>
+
+    <!--
+        ESCENARIO 2: Catálogo vacío
+        th:if   → se muestra cuando la lista está vacía
+        th:unless → se muestra cuando hay elementos (inverso de th:if)
+    -->
+    <div th:if="${#lists.isEmpty(events)}" class="empty-state">
+        <h2>Actualmente no hay eventos programados</h2>
+        <p>Puedes agregar el primero haciendo clic en <strong>+ Nuevo Evento</strong>.</p>
+    </div>
+
+    <!--
+        ESCENARIO 1: Tabla con datos
+        th:unless → opuesto de th:if, se renderiza si la lista NO está vacía
+        th:each   → itera sobre la colección "events" del Model
+        th:text   → renderiza el valor de la propiedad de forma dinámica
+    -->
+    <table class="data-table" th:unless="${#lists.isEmpty(events)}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- th:each: por cada 'event' en la lista 'events' del Model -->
+        <tr th:each="event : ${events}">
+            <td th:text="${event.id}">1</td>
+            <td th:text="${event.name}">Nombre del evento</td>
+            <td th:text="${event.description}">Descripción</td>
+            <td class="actions">
+                <!-- Botón editar: enlace con ID dinámico -->
+                <a th:href="@{/admin/events/{id}/edit(id=${event.id})}" class="btn btn-sm btn-warning">
+                     Editar
+                </a>
+                <!-- Formulario de borrado: POST porque HTML no soporta DELETE -->
+                <form th:action="@{/admin/events/{id}/delete(id=${event.id})}"
+                      method="post"
+                      style="display:inline;"
+                      onsubmit="return confirm('¿Eliminar este evento?')">
+                    <button type="submit" class="btn btn-sm btn-danger">🗑 Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>
+
+<footer class="site-footer">
+    <p>Eventify Admin Panel &copy; 2025 &mdash; <a href="/swagger-ui.html">Swagger UI</a></p>
+</footer>
+
+</body>
+</html>

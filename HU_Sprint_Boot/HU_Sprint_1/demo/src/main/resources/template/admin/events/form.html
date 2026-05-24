@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!--
+      th:text con operador ternario: si el evento ya tiene ID → "Editar", si no → "Nuevo"
+  -->
+  <title th:text="${event.id != null} ? 'Editar Evento — Eventify' : 'Nuevo Evento — Eventify'">
+    Evento — Eventify Admin
+  </title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <span class="logo"> Eventify</span>
+    <nav>
+      <a th:href="@{/admin/events}" class="active">Eventos</a>
+      <a th:href="@{/admin/venues}">Lugares</a>
+      <a href="/swagger-ui.html" target="_blank" class="api-link">API Docs ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main class="content">
+
+  <div class="page-header">
+    <!-- th:text con ternario para título dinámico según si es edición o creación -->
+    <h1 th:text="${event.id != null} ? 'Editar Evento' : 'Nuevo Evento'">Evento</h1>
+    <a th:href="@{/admin/events}" class="btn btn-secondary">← Volver al listado</a>
+  </div>
+
+  <div class="form-card">
+    <!--
+        th:action: URL dinámica. Si hay ID → ruta de edición, si no → ruta de creación
+        th:object: vincula el formulario completo con el objeto "event" del Model
+        method="post": los formularios HTML solo soportan GET y POST
+    -->
+    <form th:action="${event.id != null}
+                          ? @{/admin/events/{id}/edit(id=${event.id})}
+                          : @{/admin/events}"
+          th:object="${event}"
+          method="post"
+          novalidate>
+
+      <!-- Campo: name -->
+      <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+        <label for="name">Nombre del evento <span class="required">*</span></label>
+        <!--
+            th:field: vincula el input con la propiedad "name" del objeto th:object
+            genera automáticamente id, name y value
+        -->
+        <input type="text"
+               th:field="*{name}"
+               placeholder="Ej: Java Conference 2025"
+               maxlength="150"/>
+        <!-- th:if + th:errors: muestra mensajes de validación si el campo falla -->
+        <span th:if="${#fields.hasErrors('name')}"
+              th:errors="*{name}"
+              class="field-error">
+                </span>
+      </div>
+
+      <!-- Campo: description -->
+      <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? 'has-error'">
+        <label for="description">Descripción <span class="required">*</span></label>
+        <textarea th:field="*{description}"
+                  rows="4"
+                  placeholder="Describe el evento..."
+                  maxlength="500">
+                </textarea>
+        <span th:if="${#fields.hasErrors('description')}"
+              th:errors="*{description}"
+              class="field-error">
+                </span>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <!-- th:text dinámico en el botón -->
+          <span th:text="${event.id != null} ? ' Guardar cambios' : ' Crear Evento'">Guardar</span>
+        </button>
+        <a th:href="@{/admin/events}" class="btn btn-secondary">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>Eventify Admin Panel &copy; 2025</p>
+</footer>
+
+</body>
+</html>

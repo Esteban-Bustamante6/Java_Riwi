@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle != null ? pageTitle + ' — Eventify' : 'Eventify Admin'}">Eventify Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <span class="logo">Eventify</span>
+        <nav>
+            <a th:href="@{/admin/events}" th:classappend="${#request.requestURI.contains('/events')} ? 'active'">
+                Eventos
+            </a>
+            <a th:href="@{/admin/venues}" th:classappend="${#request.requestURI.contains('/venues')} ? 'active'">
+                Lugares
+            </a>
+            <a href="/swagger-ui.html" target="_blank" class="api-link">API Docs ↗</a>
+        </nav>
+    </div>
+</header>
+
+<main class="content">
+    <!-- Flash message (Post-Redirect-Get success) -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+    <!-- Page content injected here by each template -->
+    <th:block th:replace="${content}"/>
+</main>
+
+<footer class="site-footer">
+    <p>Eventify Admin Panel &copy; 2025 &mdash; <a href="/swagger-ui.html">Swagger UI</a></p>
+</footer>
+
+</body>
+</html>
