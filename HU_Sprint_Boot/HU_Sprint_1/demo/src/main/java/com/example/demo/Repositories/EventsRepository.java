@@ -1,50 +1,17 @@
 package com.example.demo.Repositories;
 
 import com.example.demo.Models.Event;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
-public class EventsRepository implements GenericRepository<Event , Long> {
+public interface EventsRepository extends JpaRepository<Event, Long> {
 
-    private final List<Event> event = new ArrayList<>();
+    // Derived Query: busca eventos cuyo nombre contenga el texto (case-insensitive)
+    Page<Event> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    @Override
-    public List<Event> findAll() {
-        return event;
-    }
-
-    @Override
-    public Event findById(Long id) {
-        return event.stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public void save(Event events) {
-        event.add(events);
-
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        return event.removeIf(e -> e.getId().equals(id));
-    }
-
-    @Override
-    public Event update(Long id, Event event) {
-        Event existing = this.findById(id);
-
-        if (existing != null) {
-            existing.setName(event.getName());
-            existing.setDescription(event.getDescription());
-            return existing;
-        }
-
-        return null;
-    }
+    // Derived Query: busca eventos cuya descripción contenga el texto
+    Page<Event> findByDescriptionContainingIgnoreCase(String description, Pageable pageable);
 }
