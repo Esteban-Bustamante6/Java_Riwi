@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${venue.id != null} ? 'Editar Lugar — Eventify' : 'Nuevo Lugar — Eventify'">
+        Lugar — Eventify Admin
+    </title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <span class="logo">⚡ Eventify</span>
+        <nav>
+            <a th:href="@{/admin/events}">Eventos</a>
+            <a th:href="@{/admin/venues}" class="active">Lugares</a>
+            <a href="/swagger-ui.html" target="_blank" class="api-link">API Docs ↗</a>
+        </nav>
+    </div>
+</header>
+
+<main class="content">
+
+    <div class="page-header">
+        <h1 th:text="${venue.id != null} ? 'Editar Lugar' : 'Nuevo Lugar'">Lugar</h1>
+        <a th:href="@{/admin/venues}" class="btn btn-secondary">← Volver al listado</a>
+    </div>
+
+    <div class="form-card">
+        <form th:action="${venue.id != null}
+                            ? @{/admin/venues/{id}/edit(id=${venue.id})}
+                            : @{/admin/venues}"
+              th:object="${venue}"
+              method="post"
+              novalidate>
+
+            <!-- ── Nombre ──────────────────────────────────────────────────── -->
+            <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+                <label>Nombre del lugar <span class="required">*</span></label>
+                <input type="text" th:field="*{name}" placeholder="Ej: Teatro Metropolitano" maxlength="150"/>
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="field-error"></span>
+            </div>
+
+            <!-- ── Ciudad (campo nuevo) ───────────────────────────────────── -->
+            <div class="form-group" th:classappend="${#fields.hasErrors('city')} ? 'has-error'">
+                <label>Ciudad <span class="required">*</span></label>
+                <input type="text" th:field="*{city}" placeholder="Ej: Medellín" maxlength="100"/>
+                <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="field-error"></span>
+            </div>
+
+            <!-- ── Dirección ──────────────────────────────────────────────── -->
+            <div class="form-group" th:classappend="${#fields.hasErrors('address')} ? 'has-error'">
+                <label>Dirección <span class="required">*</span></label>
+                <textarea th:field="*{address}" rows="3" placeholder="Ej: Cra. 38 #54-97, Medellín" maxlength="500"></textarea>
+                <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="field-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${venue.id != null} ? ' Guardar cambios' : ' Crear Lugar'">Guardar</span>
+                </button>
+                <a th:href="@{/admin/venues}" class="btn btn-secondary">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <p>Eventify Admin Panel &copy; 2025</p>
+</footer>
+
+</body>
+</html>

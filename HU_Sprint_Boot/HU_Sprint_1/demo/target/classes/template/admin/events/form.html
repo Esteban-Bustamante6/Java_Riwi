@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${event.id != null} ? 'Editar Evento — Eventify' : 'Nuevo Evento — Eventify'">
+    Evento — Eventify Admin
+  </title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <span class="logo">⚡ Eventify</span>
+    <nav>
+      <a th:href="@{/admin/events}" class="active">Eventos</a>
+      <a th:href="@{/admin/venues}">Lugares</a>
+      <a href="/swagger-ui.html" target="_blank" class="api-link">API Docs ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main class="content">
+
+  <div class="page-header">
+    <h1 th:text="${event.id != null} ? 'Editar Evento' : 'Nuevo Evento'">Evento</h1>
+    <a th:href="@{/admin/events}" class="btn btn-secondary">← Volver al listado</a>
+  </div>
+
+  <div class="form-card">
+    <form th:action="${event.id != null}
+                            ? @{/admin/events/{id}/edit(id=${event.id})}
+                            : @{/admin/events}"
+          th:object="${event}"
+          method="post"
+          novalidate>
+
+      <!-- ── Nombre ──────────────────────────────────────────────────── -->
+      <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+        <label>Nombre del evento <span class="required">*</span></label>
+        <input type="text" th:field="*{name}" placeholder="Ej: Concierto de Rock 2025" maxlength="150"/>
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="field-error"></span>
+      </div>
+
+      <!-- ── Descripción ────────────────────────────────────────────── -->
+      <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? 'has-error'">
+        <label>Descripción <span class="required">*</span></label>
+        <textarea th:field="*{description}" rows="3" placeholder="Describe el evento..." maxlength="500"></textarea>
+        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="field-error"></span>
+      </div>
+
+      <!-- ── Fecha ──────────────────────────────────────────────────── -->
+      <div class="form-group" th:classappend="${#fields.hasErrors('date')} ? 'has-error'">
+        <label>Fecha y hora <span class="required">*</span></label>
+        <input type="datetime-local" th:field="*{date}"/>
+        <span th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="field-error"></span>
+      </div>
+
+      <!-- ── Capacidad ──────────────────────────────────────────────── -->
+      <div class="form-group" th:classappend="${#fields.hasErrors('capacity')} ? 'has-error'">
+        <label>Capacidad máxima</label>
+        <input type="number" th:field="*{capacity}" placeholder="Ej: 500" min="1"/>
+        <span th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="field-error"></span>
+      </div>
+
+
+      <div class="form-group">
+        <label>Lugar / Sede <span class="required">*</span></label>
+        <select name="venueId" class="form-select" required>
+          <option value="">— Selecciona un lugar —</option>
+          <option th:each="v : ${venues}"
+                  th:value="${v.id}"
+                  th:text="${v.name + ' (' + v.city + ')'}"
+                  th:selected="${event.venue != null and event.venue.id == v.id}">
+            Venue
+          </option>
+        </select>
+      </div>
+
+
+      <div class="form-group">
+        <label>Categorías</label>
+        <div class="checkbox-grid">
+          <label th:each="cat : ${categories}" class="checkbox-item">
+            <input type="checkbox"
+                   name="categoryIds"
+                   th:value="${cat.id}"
+                   th:checked="${event.categories != null and event.categories.contains(cat)}"/>
+            <span th:text="${cat.name}">Categoría</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <span th:text="${event.id != null} ? ' Guardar cambios' : ' Crear Evento'">Guardar</span>
+        </button>
+        <a th:href="@{/admin/events}" class="btn btn-secondary">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>Eventify Admin Panel &copy; 2025</p>
+</footer>
+
+</body>
+</html>

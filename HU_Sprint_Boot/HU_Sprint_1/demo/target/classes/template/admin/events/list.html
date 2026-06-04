@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Eventos — Eventify Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <span class="logo">⚡ Eventify</span>
+        <nav>
+            <a th:href="@{/admin/events}" class="active">Eventos</a>
+            <a th:href="@{/admin/venues}">Lugares</a>
+            <a href="/swagger-ui.html" target="_blank" class="api-link">API Docs ↗</a>
+        </nav>
+    </div>
+</header>
+
+<main class="content">
+
+    <!-- Flash message -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+    <div class="page-header">
+        <h1>Catálogo de Eventos</h1>
+        <a th:href="@{/admin/events/new}" class="btn btn-primary">+ Nuevo Evento</a>
+    </div>
+
+    <!-- ── BARRA DE FILTROS ─────────────────────────────────────────────────── -->
+    <!--
+        Los filtros se mantienen en la URL al navegar entre páginas (Escenario 3).
+        th:value restaura el valor digitado previamente en el campo.
+    -->
+    <form th:action="@{/admin/events}" method="get" class="filter-bar">
+        <input type="text" name="name"     th:value="${name}"
+               placeholder="Buscar por nombre..." class="filter-input"/>
+        <input type="text" name="city"     th:value="${city}"
+               placeholder="Ciudad del venue..."  class="filter-input"/>
+        <input type="text" name="category" th:value="${category}"
+               placeholder="Categoría..."         class="filter-input"/>
+        <input type="hidden" name="page" value="0"/>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a th:href="@{/admin/events}" class="btn btn-secondary">Limpiar</a>
+    </form>
+
+    <!-- ── TABLA DE EVENTOS ─────────────────────────────────────────────────── -->
+    <div th:if="${#lists.isEmpty(events)}" class="empty-state">
+        <h2>No se encontraron eventos</h2>
+        <p>Intenta con otro filtro o crea uno nuevo con <strong>+ Nuevo Evento</strong>.</p>
+    </div>
+
+    <table class="data-table" th:unless="${#lists.isEmpty(events)}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Lugar</th>
+            <th>Ciudad</th>
+            <th>Categorías</th>
+            <th>Cap.</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.id}">1</td>
+            <td th:text="${event.name}">Nombre</td>
+            <td th:text="${#temporals.format(event.date, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+            <td th:text="${event.venue.name}">Venue</td>
+            <td th:text="${event.venue.city}">Ciudad</td>
+            <!-- Muestra todas las categorías separadas por coma -->
+            <td>
+                <span th:each="cat, iter : ${event.categories}">
+                    <span th:text="${cat.name}">Cat</span><span th:if="${!iter.last}">, </span>
+                </span>
+            </td>
+            <td th:text="${event.capacity}">0</td>
+            <td class="actions">
+                <a th:href="@{/admin/events/{id}/edit(id=${event.id})}" class="btn btn-sm btn-warning">
+                    ✏ Editar
+                </a>
+                <form th:action="@{/admin/events/{id}/delete(id=${event.id})}"
+                      method="post"
+                      style="display:inline;"
+                      onsubmit="return confirm('¿Desactivar este evento? (borrado lógico)')">
+                    <button type="submit" class="btn btn-sm btn-danger">🗑 Desactivar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- ── BARRA DE PAGINACIÓN Slice (Anterior / Siguiente) ─────────────────── -->
+    <!--
+        Usa Slice<Event> → NO hay total de páginas, solo sabe si hay "siguiente".
+        Los parámetros de filtro se pasan en la URL para mantener el contexto (Escenario 3).
+    -->
+    <div class="pagination-bar" th:unless="${#lists.isEmpty(events)}">
+
+        <!-- Botón Anterior: visible y activo solo si NO estamos en página 0 -->
+        <a th:if="${!slice.first}"
+           th:href="@{/admin/events(page=${slice.number - 1}, name=${name}, city=${city}, category=${category})}"
+           class="btn btn-secondary">← Anterior</a>
+        <span th:if="${slice.first}" class="btn btn-secondary disabled">← Anterior</span>
+
+        <span class="page-info">Página <strong th:text="${slice.number + 1}">1</strong></span>
+
+        <!-- Botón Siguiente: visible y activo solo si Slice indica que hay más datos -->
+        <a th:if="${slice.hasNext}"
+           th:href="@{/admin/events(page=${slice.number + 1}, name=${name}, city=${city}, category=${category})}"
+           class="btn btn-secondary">Siguiente →</a>
+        <span th:if="${!slice.hasNext}" class="btn btn-secondary disabled">Siguiente →</span>
+
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <p>Eventify Admin Panel &copy; 2025 &mdash; <a href="/swagger-ui.html">Swagger UI</a></p>
+</footer>
+
+</body>
+</html>
